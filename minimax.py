@@ -1,8 +1,8 @@
 import numpy as np
 import math
 
-ROW_COUNT = 6
-COLUMN_COUNT = 7
+ROW_COUNT = 7
+COLUMN_COUNT = 8
 WINDOW_LENGTH = 4
 VAZIO = 0
 PECA_JOGADOR = 2
@@ -59,26 +59,26 @@ def jogada_vencedora(tabuleiro, peca):
     Verifica se a peça fornecida resultou em uma jogada vencedora.
     """
     # Verifica horizontalmente
-    for c in range(COLUMN_COUNT - 3):  # Apenas até a coluna 4 para evitar ultrapassar os limites
-        for r in range(ROW_COUNT):
+    for r in range(ROW_COUNT):  # Para cada linha
+        for c in range(COLUMN_COUNT - 3):  # Para cada conjunto possível de 4 colunas consecutivas
             if all([tabuleiro[r][c + i] == peca for i in range(WINDOW_LENGTH)]):
                 return True
 
     # Verifica verticalmente
-    for c in range(COLUMN_COUNT):
-        for r in range(ROW_COUNT - 3):  # Apenas até a linha 3 para evitar ultrapassar os limites
+    for c in range(COLUMN_COUNT):  # Para cada coluna
+        for r in range(ROW_COUNT - 3):  # Para cada conjunto possível de 4 linhas consecutivas
             if all([tabuleiro[r + i][c] == peca for i in range(WINDOW_LENGTH)]):
                 return True
 
     # Verifica diagonal positiva (\)
-    for c in range(COLUMN_COUNT - 3):
-        for r in range(ROW_COUNT - 3):
+    for r in range(ROW_COUNT - 3):  # Para cada linha inicial possível de uma diagonal positiva
+        for c in range(COLUMN_COUNT - 3):  # Para cada coluna inicial possível
             if all([tabuleiro[r + i][c + i] == peca for i in range(WINDOW_LENGTH)]):
                 return True
 
     # Verifica diagonal negativa (/)
-    for c in range(COLUMN_COUNT - 3):
-        for r in range(3, ROW_COUNT):  # Começa da linha 3 para evitar ultrapassar os limites
+    for r in range(3, ROW_COUNT):  # Para cada linha inicial possível de uma diagonal negativa
+        for c in range(COLUMN_COUNT - 3):  # Para cada coluna inicial possível
             if all([tabuleiro[r - i][c + i] == peca for i in range(WINDOW_LENGTH)]):
                 return True
 

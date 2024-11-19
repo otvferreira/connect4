@@ -49,7 +49,7 @@ turno = JOGADOR
 profundidade = 4
 algoritmo_ia = minimax
 # algoritmo_ia = alfabeta
-    
+
 # Desenha o tabuleiro inicial
 draw_board(tabuleiro, screen, width, height)
 
@@ -60,39 +60,41 @@ while not fim_de_jogo:
             sys.exit()
 
         if evento.type == pygame.MOUSEMOTION:
-            pygame.draw.rect(screen, PRETO, (0, 0, width, SQUARESIZE))
-            pos_x = evento.pos[0]
-            if turno == JOGADOR:
-                screen.blit(peca_cruzeiro, (pos_x - SQUARESIZE // 2, SQUARESIZE // 2 - SQUARESIZE // 2))
-            pygame.display.update()
+            if not fim_de_jogo:  # Apenas desenha se o jogo não acabou
+                pygame.draw.rect(screen, PRETO, (0, 0, width, SQUARESIZE))
+                pos_x = evento.pos[0]
+                if turno == JOGADOR:
+                    screen.blit(peca_cruzeiro, (pos_x - SQUARESIZE // 2, SQUARESIZE // 2 - SQUARESIZE // 2))
+                pygame.display.update()
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
-            pygame.draw.rect(screen, PRETO, (0, 0, width, SQUARESIZE))
+            if not fim_de_jogo:  # Impede ações após o jogo acabar
+                pygame.draw.rect(screen, PRETO, (0, 0, width, SQUARESIZE))
 
-            if turno == JOGADOR:
-                pos_x = evento.pos[0]
-                coluna = int(math.floor(pos_x / SQUARESIZE))
+                if turno == JOGADOR:
+                    pos_x = evento.pos[0]
+                    coluna = int(math.floor(pos_x / SQUARESIZE))
 
-                if coluna_valida(tabuleiro, coluna):
-                    linha = proxima_linha_livre(tabuleiro, coluna)
-                    tabuleiro[linha][coluna] = PECA_JOGADOR
+                    if coluna_valida(tabuleiro, coluna):
+                        linha = proxima_linha_livre(tabuleiro, coluna)
+                        tabuleiro[linha][coluna] = PECA_JOGADOR
 
-                    if jogada_vencedora(tabuleiro, PECA_JOGADOR):
-                        mensagem = fonte.render("Jogador venceu!", 1, AZUL)
-                        screen.blit(mensagem, (40, 10))
-                        fim_de_jogo = True
+                        if jogada_vencedora(tabuleiro, PECA_JOGADOR):
+                            mensagem = fonte.render("Jogador venceu!", 2, AZUL)
+                            screen.blit(mensagem, (40, 10))
+                            fim_de_jogo = True
+                            pygame.display.update()  # Atualiza a mensagem na tela
+                            break
 
-                    turno = IA
-                    draw_board(tabuleiro, screen, width, height)
+                        turno = IA
+                        draw_board(tabuleiro, screen, width, height)
 
     # Movimento da IA
     if turno == IA and not fim_de_jogo:
-        # Medir o tempo de execução do algoritmo escolhido
-        inicio = time.time()  # Início do cronômetro
+        inicio = time.time()
         coluna, _ = algoritmo_ia(tabuleiro, profundidade, -math.inf, math.inf, True)
-        fim = time.time()  # Fim do cronômetro
+        fim = time.time()
 
-        # Exibir o tempo no terminal
         print(f"Tempo gasto pelo algoritmo {algoritmo_ia.__name__}: {fim - inicio:.4f} segundos")
 
         if coluna_valida(tabuleiro, coluna):
@@ -103,6 +105,7 @@ while not fim_de_jogo:
                 mensagem = fonte.render("IA venceu!", 1, AMARELO)
                 screen.blit(mensagem, (40, 10))
                 fim_de_jogo = True
+                pygame.display.update()  # Atualiza a mensagem na tela
 
             turno = JOGADOR
             draw_board(tabuleiro, screen, width, height)
@@ -110,9 +113,6 @@ while not fim_de_jogo:
 # Aguarda interação para fechar o jogo
 while True:
     for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if evento.type == pygame.KEYDOWN:
+        if evento.type in [pygame.QUIT, pygame.KEYDOWN]:
             pygame.quit()
             sys.exit()

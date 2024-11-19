@@ -2,8 +2,8 @@ import numpy as np
 import math
 from minimax import coluna_valida, proxima_linha_livre, jogada_vencedora, locais_validos, pontuar_tabuleiro
 
-ROW_COUNT = 6
-COLUMN_COUNT = 7
+ROW_COUNT = 7
+COLUMN_COUNT = 8
 WINDOW_LENGTH = 4
 VAZIO = 0
 PECA_JOGADOR = 2
